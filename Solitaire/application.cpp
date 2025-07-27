@@ -157,6 +157,21 @@ LRESULT Application::MessageHandler(UINT msg, WPARAM wparam, LPARAM lparam)
 	case WM_LBUTTONUP:
 		LMouseUp(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam), wparam);
 		return 0;
+	case WM_CONTEXTMENU:
+	{
+		HMENU menu = CreatePopupMenu();
+		AppendMenuW(menu, MF_STRING, 1, L"Restart");
+		SetForegroundWindow(m_mainWindow);
+		TrackPopupMenu(menu, TPM_LEFTALIGN | TPM_TOPALIGN, LOWORD(lparam), HIWORD(lparam), 0, m_mainWindow, nullptr);
+		return 0;
+	}
+	case WM_COMMAND:
+		if (LOWORD(wparam) == 1)
+		{
+			InitGame();
+			RequestRedraw();
+		}
+		return 0;
 	case WM_SIZE:
 		Resize(LOWORD(lparam), HIWORD(lparam));
 		return 0;
@@ -301,7 +316,7 @@ void Application::ReleaseGrabbedCard()
 					{
 						if (topCard)
 						{
-							if ((topCard->IsBlack() ^ m_grabbedCard->IsBlack()) && topCard->value == m_grabbedCard->value + 1)
+							if ((topCard->IsBlack() ^ m_grabbedCard->IsBlack()) && (topCard->value == m_grabbedCard->value + 1) && !topCard->faceDown)
 							{
 								topCard->next = m_grabbedCard;
 								m_grabbedCard = nullptr;
@@ -433,9 +448,9 @@ int Application::Run()
 	ShowWindow(m_mainWindow, SW_SHOWDEFAULT);
 	MSG msg{};
 	while (GetMessageW(&msg, nullptr, 0, 0))
-	{
+{
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);
-	}
+}
 	return static_cast<int>(msg.wParam);
 }
