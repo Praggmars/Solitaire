@@ -162,7 +162,7 @@ LRESULT Application::MessageHandler(UINT msg, WPARAM wparam, LPARAM lparam)
 		HMENU menu = CreatePopupMenu();
 		AppendMenuW(menu, MF_STRING, 1, L"Restart");
 		SetForegroundWindow(m_mainWindow);
-		TrackPopupMenu(menu, TPM_LEFTALIGN | TPM_TOPALIGN, LOWORD(lparam), HIWORD(lparam), 0, m_mainWindow, nullptr);
+		TrackPopupMenu(menu, TPM_LEFTALIGN | TPM_TOPALIGN, GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam), 0, m_mainWindow, nullptr);
 		return 0;
 	}
 	case WM_COMMAND:
